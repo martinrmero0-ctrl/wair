@@ -120,8 +120,8 @@ export function SwipeDeck() {
   const deckSize = deck.length || DAILY_DECK_SIZE;
 
   return (
-    <main className="flex min-h-dvh flex-col bg-white">
-      <header className="px-6 pt-8 pb-6">
+    <main className="flex min-h-[calc(100dvh-var(--nav-height))] flex-col bg-white">
+      <header className="px-6 pt-6 pb-6">
         <ProgressPips total={deckSize} completed={completed} />
         {hydrated && <DeckTasteLabel historyCount={historyCount} />}
       </header>

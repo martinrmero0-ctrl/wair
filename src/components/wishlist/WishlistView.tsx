@@ -55,8 +55,8 @@ export function WishlistView() {
   };
 
   return (
-    <main className="flex min-h-dvh flex-col bg-white">
-      <header className="px-6 pt-8">
+    <main className="flex min-h-[calc(100dvh-var(--nav-height))] flex-col bg-white">
+      <header className="px-6 pt-6">
         <h1 className="text-center text-3xl font-medium italic text-black">
           Wishlist
         </h1>

@@ -91,15 +91,15 @@ export function ProfileView() {
 
   if (!hydrated) {
     return (
-      <main className="flex min-h-dvh items-center justify-center bg-white">
+      <main className="flex min-h-[calc(100dvh-var(--nav-height))] items-center justify-center bg-white">
         <p className="text-black/40">Loading profile…</p>
       </main>
     );
   }
 
   return (
-    <main className="flex min-h-dvh flex-col bg-white">
-      <div className="mx-auto w-full max-w-lg flex-1 px-6 pt-8 pb-28">
+    <main className="flex min-h-[calc(100dvh-var(--nav-height))] flex-col bg-white">
+      <div className="mx-auto w-full max-w-lg flex-1 px-6 pt-6 pb-28">
         <h1 className="mb-8 text-center text-3xl font-medium italic text-black">
           Profile
         </h1>

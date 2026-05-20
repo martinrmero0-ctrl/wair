@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { TopNav } from "@/components/nav/TopNav";
 import { Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
@@ -24,7 +25,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${cormorant.variable} font-serif antialiased`}>
-        {children}
+        <TopNav />
+        <div className="page-with-nav">{children}</div>
       </body>
     </html>
   );

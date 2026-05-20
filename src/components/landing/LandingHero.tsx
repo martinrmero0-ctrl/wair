@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { SearchModeToggle, type SearchMode } from "./SearchModeToggle";
 
@@ -9,7 +8,7 @@ export function LandingHero() {
   const [mode, setMode] = useState<SearchMode>("both");
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center bg-white px-6">
+    <main className="flex min-h-[calc(100dvh-var(--nav-height))] flex-col items-center justify-center bg-white px-6">
       <div className="flex w-full max-w-md flex-col items-center text-center">
         <p className="mb-4 text-lg font-light tracking-wide text-black/80">
           For you, by you.
@@ -39,33 +38,6 @@ export function LandingHero() {
         </form>
 
         <SearchModeToggle value={mode} onChange={setMode} />
-
-        <nav className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-          <Link
-            href="/swipe"
-            className="text-sm tracking-wide text-black/50 underline-offset-4 hover:text-black hover:underline"
-          >
-            Today&apos;s deck
-          </Link>
-          <Link
-            href="/wishlist"
-            className="text-sm tracking-wide text-black/50 underline-offset-4 hover:text-black hover:underline"
-          >
-            Wishlist
-          </Link>
-          <Link
-            href="/nearby"
-            className="text-sm tracking-wide text-black/50 underline-offset-4 hover:text-black hover:underline"
-          >
-            Nearby
-          </Link>
-          <Link
-            href="/profile"
-            className="text-sm tracking-wide text-black/50 underline-offset-4 hover:text-black hover:underline"
-          >
-            Profile
-          </Link>
-        </nav>
       </div>
     </main>
   );
