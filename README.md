@@ -24,7 +24,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | `/`         | Landing             |
 | `/swipe`    | Daily swipe deck    |
 | `/wishlist` | Wishlist            |
-| `/nearby`   | Nearby stores (NYC) |
+| `/nearby`   | Explore — stores (NYC) |
+| `/social`   | Social feed (coming soon) |
 | `/profile`  | Profile & settings  |
 
 ## Project structure

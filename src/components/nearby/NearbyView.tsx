@@ -38,14 +38,14 @@ export function NearbyView() {
     <main className="flex min-h-[calc(100dvh-var(--nav-height))] flex-col bg-white">
       <header className="px-6 pt-6 pb-4">
         <h1 className="mb-6 text-center text-3xl font-medium italic text-black">
-          Nearby
+          Explore
         </h1>
 
-        <label htmlFor="nearby-search" className="sr-only">
+        <label htmlFor="explore-search" className="sr-only">
           Search stores
         </label>
         <input
-          id="nearby-search"
+          id="explore-search"
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}

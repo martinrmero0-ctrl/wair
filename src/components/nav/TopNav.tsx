@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
   { href: "/swipe", label: "Swipe" },
+  { href: "/nearby", label: "Explore" },
+  { href: "/social", label: "Social" },
   { href: "/wishlist", label: "Wishlist" },
-  { href: "/nearby", label: "Nearby" },
   { href: "/profile", label: "Profile" },
 ] as const;
 
