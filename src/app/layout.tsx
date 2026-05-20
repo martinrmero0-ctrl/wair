@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { OneSignalInit } from "@/components/onesignal/OneSignalInit";
 import { TopNav } from "@/components/nav/TopNav";
+import { ONESIGNAL_SDK_URL } from "@/lib/onesignal/config";
 import { Cormorant_Garamond } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -25,6 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${cormorant.variable} font-serif antialiased`}>
+        <Script
+          id="onesignal-sdk"
+          src={ONESIGNAL_SDK_URL}
+          strategy="afterInteractive"
+        />
+        <OneSignalInit />
         <TopNav />
         <div className="page-with-nav">{children}</div>
       </body>

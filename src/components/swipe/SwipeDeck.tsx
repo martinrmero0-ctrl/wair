@@ -1,6 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useOneSignal } from "@/hooks/useOneSignal";
+import {
+  hasCompletedDeckBefore,
+  markFirstDeckComplete,
+  shouldShowNotificationPrompt,
+} from "@/lib/notifications/prompt-storage";
 import { DAILY_DECK_SIZE } from "@/lib/swipe/catalog";
 import { getPersonalizedDeck } from "@/lib/swipe/getPersonalizedDeck";
 import { getSwipeHistoryCount, recordSwipe } from "@/lib/swipe/swipe-history";
@@ -8,6 +14,7 @@ import type { DailyPiece } from "@/lib/swipe/types";
 import { saveToWishlist } from "@/lib/wishlist/storage";
 import { DeckComplete } from "./DeckComplete";
 import { DeckTasteLabel } from "./DeckTasteLabel";
+import { NotificationPermissionModal } from "./NotificationPermissionModal";
 import { ProgressPips } from "./ProgressPips";
 import { SwipeActions } from "./SwipeActions";
 import { SwipeCard } from "./SwipeCard";
@@ -17,9 +24,11 @@ const SWIPE_THRESHOLD = 96;
 type SwipeDirection = "left" | "right";
 
 export function SwipeDeck() {
+  const { requestPermission } = useOneSignal();
   const [deck, setDeck] = useState<DailyPiece[]>([]);
   const [historyCount, setHistoryCount] = useState(0);
   const [hydrated, setHydrated] = useState(false);
+  const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
   const [index, setIndex] = useState(0);
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -119,8 +128,24 @@ export function SwipeDeck() {
 
   const deckSize = deck.length || DAILY_DECK_SIZE;
 
+  useEffect(() => {
+    if (!isDone) return;
+
+    if (!hasCompletedDeckBefore()) {
+      markFirstDeckComplete();
+      if (shouldShowNotificationPrompt()) {
+        setShowNotificationPrompt(true);
+      }
+    }
+  }, [isDone]);
+
   return (
     <main className="flex min-h-[calc(100dvh-var(--nav-height))] flex-col bg-white">
+      <NotificationPermissionModal
+        open={showNotificationPrompt}
+        onClose={() => setShowNotificationPrompt(false)}
+        onAllow={requestPermission}
+      />
       <header className="px-6 pt-6 pb-6">
         <ProgressPips total={deckSize} completed={completed} />
         {hydrated && <DeckTasteLabel historyCount={historyCount} />}
