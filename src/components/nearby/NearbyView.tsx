@@ -1,6 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { LocationPermissionPrompt } from "@/components/location/LocationPermissionPrompt";
+import { LocationStatusBanner } from "@/components/location/LocationStatusBanner";
+import { useGeolocation } from "@/hooks/useGeolocation";
 import {
   getBookmarkedStoreIds,
   toggleStoreBookmark,
@@ -13,6 +17,21 @@ import { NearbyTagFilters } from "./NearbyTagFilters";
 import { StoreCard } from "./StoreCard";
 
 export function NearbyView() {
+  const searchParams = useSearchParams();
+  const locateFromHome = searchParams.get("locate") === "1";
+
+  const {
+    hydrated: geoHydrated,
+    status: locationStatus,
+    showPrompt,
+    isRequesting,
+    usesNycFallback,
+    requestLocation,
+    dismissPrompt,
+    setShowPrompt,
+    withDistances,
+  } = useGeolocation({ promptOnMount: true });
+
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState<StoreTagFilter>("all");
   const [sort, setSort] = useState<StoreSort>("nearest");
@@ -24,10 +43,17 @@ export function NearbyView() {
     setHydrated(true);
   }, []);
 
+  useEffect(() => {
+    if (locateFromHome && geoHydrated && locationStatus === "unknown") {
+      setShowPrompt(true);
+    }
+  }, [locateFromHome, geoHydrated, locationStatus, setShowPrompt]);
+
   const stores = useMemo(() => {
-    const filtered = filterStores(NYC_STORES, query, tag);
+    const withDistance = withDistances(NYC_STORES);
+    const filtered = filterStores(withDistance, query, tag);
     return sortStores(filtered, sort);
-  }, [query, tag, sort]);
+  }, [query, tag, sort, withDistances]);
 
   const handleToggleBookmark = useCallback((id: string) => {
     toggleStoreBookmark(id);
@@ -36,10 +62,21 @@ export function NearbyView() {
 
   return (
     <main className="flex min-h-[calc(100dvh-var(--nav-height))] flex-col bg-white">
+      <LocationPermissionPrompt
+        open={showPrompt}
+        loading={isRequesting}
+        onAllow={requestLocation}
+        onDismiss={dismissPrompt}
+      />
+
       <header className="px-6 pt-6 pb-4">
-        <h1 className="mb-6 text-center text-3xl font-medium italic text-black">
+        <h1 className="mb-4 text-center text-3xl font-medium italic text-black">
           Explore
         </h1>
+
+        {geoHydrated && (
+          <LocationStatusBanner usesNycFallback={usesNycFallback} />
+        )}
 
         <label htmlFor="explore-search" className="sr-only">
           Search stores
@@ -63,7 +100,7 @@ export function NearbyView() {
       </header>
 
       <div className="flex-1 px-6 py-6">
-        {!hydrated ? (
+        {!hydrated || !geoHydrated ? (
           <p className="text-center text-black/40">Loading…</p>
         ) : stores.length === 0 ? (
           <p className="text-center text-lg text-black/45">

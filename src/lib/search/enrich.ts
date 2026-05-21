@@ -1,3 +1,6 @@
+import { haversineMiles } from "@/lib/location/haversine";
+import { NYC_CENTER } from "@/lib/location/constants";
+import { getStoredLocation } from "@/lib/location/storage";
 import { NYC_STORES } from "@/lib/nearby/stores";
 import type { SearchResult } from "./types";
 
@@ -28,6 +31,17 @@ function hashColor(name: string): string {
   return CARD_COLORS[Math.abs(hash) % CARD_COLORS.length];
 }
 
+function getDistanceOrigin() {
+  const stored = getStoredLocation();
+  if (stored?.status === "granted") {
+    return {
+      latitude: stored.latitude,
+      longitude: stored.longitude,
+    };
+  }
+  return NYC_CENTER;
+}
+
 function findStoreByName(name: string) {
   const normalized = name.toLowerCase().trim();
   return NYC_STORES.find(
@@ -41,10 +55,16 @@ function findStoreByName(name: string) {
 export function enrichSearchResult(result: SearchResult): EnrichedSearchResult {
   if (result.type === "store") {
     const store = findStoreByName(result.name);
+    const origin = getDistanceOrigin();
     return {
       ...result,
       color: store?.color ?? hashColor(result.name),
-      distanceMiles: store?.distanceMiles ?? 1.2,
+      distanceMiles: store
+        ? haversineMiles(origin, {
+            latitude: store.latitude,
+            longitude: store.longitude,
+          })
+        : undefined,
       isOpen: store?.isOpen ?? true,
     };
   }

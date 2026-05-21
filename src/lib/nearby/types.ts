@@ -9,6 +9,9 @@ export type NearbyStore = {
   id: string;
   name: string;
   type: string;
+  latitude: number;
+  longitude: number;
+  /** Distance from user (or NYC fallback); computed at runtime */
   distanceMiles: number;
   rating: number;
   reviewCount: number;

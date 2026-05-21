@@ -1,11 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { SearchResponse } from "@/lib/search/types";
 import { SearchResultsGrid } from "./SearchResultsGrid";
 import { SearchModeToggle, type SearchMode } from "./SearchModeToggle";
 
 export function LandingHero() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState<SearchMode>("both");
   const [results, setResults] = useState<SearchResponse["results"]>([]);
@@ -16,6 +18,17 @@ export function LandingHero() {
 
   const trimmedQuery = query.trim();
   const isResultsView = trimmedQuery.length > 0;
+
+  const handleModeChange = useCallback(
+    (next: SearchMode) => {
+      if (next === "near-me") {
+        router.push("/nearby?locate=1");
+        return;
+      }
+      setMode(next);
+    },
+    [router],
+  );
 
   const clearSearch = useCallback(() => {
     abortRef.current?.abort();
@@ -189,7 +202,7 @@ export function LandingHero() {
           ].join(" ")}
           aria-hidden={isResultsView}
         >
-          <SearchModeToggle value={mode} onChange={setMode} />
+          <SearchModeToggle value={mode} onChange={handleModeChange} />
         </div>
       </div>
     </main>

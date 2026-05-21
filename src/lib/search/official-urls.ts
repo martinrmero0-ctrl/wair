@@ -17,14 +17,14 @@ export const OFFICIAL_BRAND_URLS: Record<string, string> = {
 };
 
 export const OFFICIAL_STORE_URLS: Record<string, string> = {
-  "au hazard": "https://www.auhazard.com",
   "blue in green": "https://blueingreensoho.com",
   "tokio 7": "https://www.tokio7.com",
-  "front street general store": "https://www.frontstreetgeneralstore.com",
-  procell: "https://www.procellnyc.com",
+  "front general store": "https://www.frontstreetgeneralstore.com",
   "what goes around comes around": "https://www.whatgoesaroundnyc.com",
-  "pilgrim surf + supply": "https://www.pilgrimsurfsupply.com",
-  bandit: "https://banditnyc.com",
+  "screaming mimi's": "https://www.screamingmimis.com",
+  "artifact nyc": "https://artifactnyc.com",
+  procell: "https://www.procellnyc.com",
+  "l train vintage": "https://www.ltrainvintage.com",
 };
 
 function normalizeKey(name: string) {

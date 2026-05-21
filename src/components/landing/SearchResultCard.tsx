@@ -37,7 +37,7 @@ export function SearchResultCard({ result }: SearchResultCardProps) {
 
         {isStore && result.distanceMiles !== undefined && (
           <p className="mt-2 text-xs text-black/50">
-            {result.distanceMiles.toFixed(1)} mi from NYC
+            {result.distanceMiles.toFixed(1)} mi away
             <span className="mx-2 text-black/25">·</span>
             <span
               className={

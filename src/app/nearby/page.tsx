@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { NearbyView } from "@/components/nearby/NearbyView";
 
 export const metadata: Metadata = {
@@ -6,5 +7,15 @@ export const metadata: Metadata = {
 };
 
 export default function NearbyPage() {
-  return <NearbyView />;
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-[calc(100dvh-var(--nav-height))] items-center justify-center bg-white">
+          <p className="text-black/40">Loading…</p>
+        </main>
+      }
+    >
+      <NearbyView />
+    </Suspense>
+  );
 }
