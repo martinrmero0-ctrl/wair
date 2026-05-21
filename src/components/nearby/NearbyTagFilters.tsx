@@ -6,6 +6,7 @@ const TAGS: { id: StoreTagFilter; label: string }[] = [
   { id: "denim", label: "Denim" },
   { id: "japanese", label: "Japanese" },
   { id: "workwear", label: "Workwear" },
+  { id: "streetwear", label: "Streetwear" },
   { id: "consignment", label: "Consignment" },
 ];
 

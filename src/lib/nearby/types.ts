@@ -3,12 +3,14 @@ export type StoreTag =
   | "denim"
   | "japanese"
   | "workwear"
+  | "streetwear"
   | "consignment";
 
 export type NearbyStore = {
   id: string;
   name: string;
   type: string;
+  address: string;
   latitude: number;
   longitude: number;
   /** Distance from user (or NYC fallback); computed at runtime */
