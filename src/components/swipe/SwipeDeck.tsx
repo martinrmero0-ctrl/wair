@@ -7,6 +7,7 @@ import {
   markFirstDeckComplete,
   shouldShowNotificationPrompt,
 } from "@/lib/notifications/prompt-storage";
+import { isOneSignalEnvironment } from "@/lib/onesignal/environment";
 import { DAILY_DECK_SIZE } from "@/lib/swipe/catalog";
 import { getPersonalizedDeck } from "@/lib/swipe/getPersonalizedDeck";
 import { getSwipeHistoryCount, recordSwipe } from "@/lib/swipe/swipe-history";
@@ -133,7 +134,10 @@ export function SwipeDeck() {
 
     if (!hasCompletedDeckBefore()) {
       markFirstDeckComplete();
-      if (shouldShowNotificationPrompt()) {
+      if (
+        isOneSignalEnvironment() &&
+        shouldShowNotificationPrompt()
+      ) {
         setShowNotificationPrompt(true);
       }
     }
