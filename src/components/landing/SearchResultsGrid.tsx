@@ -43,7 +43,7 @@ export function SearchResultsGrid({
     <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {enriched.map((result) => (
         <SearchResultCard
-          key={`${result.type}-${result.name}`}
+          key={`${result.type}-${result.brand ?? ""}-${result.name}`}
           result={result}
         />
       ))}

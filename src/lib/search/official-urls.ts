@@ -34,7 +34,13 @@ function normalizeKey(name: string) {
 export function lookupOfficialUrl(
   name: string,
   type: "brand" | "store" | "piece",
+  brand?: string,
 ): string | null {
+  if (type === "piece") {
+    const brandKey = normalizeKey(brand ?? name);
+    return OFFICIAL_BRAND_URLS[brandKey] ?? null;
+  }
+
   const key = normalizeKey(name);
   if (type === "store") {
     return OFFICIAL_STORE_URLS[key] ?? null;

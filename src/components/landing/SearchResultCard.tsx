@@ -14,8 +14,67 @@ function typeTag(type: EnrichedSearchResult["type"]) {
 }
 
 export function SearchResultCard({ result }: SearchResultCardProps) {
-  const visitUrl = formatResultUrl(result.url);
+  const shopUrl = formatResultUrl(result.url);
   const isStore = result.type === "store";
+  const isPiece = result.type === "piece";
+
+  if (isPiece) {
+    return (
+      <article className="flex flex-col border border-black/10 bg-white">
+        <div
+          className="h-36 w-full"
+          style={{ backgroundColor: result.color }}
+          aria-hidden
+        />
+
+        <div className="flex flex-1 flex-col p-4 text-left">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              {result.brand ? (
+                <p className="text-[10px] tracking-[0.2em] text-black/45 uppercase">
+                  {result.brand}
+                </p>
+              ) : null}
+              <h2 className="mt-1 text-lg leading-tight font-medium text-black">
+                {result.name}
+              </h2>
+            </div>
+            <span className="shrink-0 text-[10px] tracking-[0.2em] text-black/40 uppercase">
+              {typeTag(result.type)}
+            </span>
+          </div>
+
+          {result.sizeAvailability ? (
+            <p className="mt-2 text-xs text-black/50">
+              Sizes: {result.sizeAvailability}
+            </p>
+          ) : null}
+
+          {result.description ? (
+            <p className="mt-2 line-clamp-2 text-sm leading-snug text-black/55">
+              {result.description}
+            </p>
+          ) : null}
+
+          <div className="mt-4 flex items-center justify-between border-t border-black/8 pt-3 text-sm">
+            <span className="tracking-widest text-black/70">
+              {result.priceRange}
+            </span>
+            {shopUrl ? (
+              <a
+                href={shopUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border border-black/20 px-3 py-1 text-xs tracking-wide text-black transition-colors hover:border-black hover:bg-black hover:text-white"
+              >
+                Shop
+              </a>
+            ) : null}
+          </div>
+        </div>
+      </article>
+    );
+  }
 
   return (
     <article className="flex flex-col border border-black/10 bg-white">
@@ -70,9 +129,9 @@ export function SearchResultCard({ result }: SearchResultCardProps) {
           <span className="tracking-widest text-black/70">
             {result.priceRange}
           </span>
-          {visitUrl ? (
+          {shopUrl ? (
             <a
-              href={visitUrl}
+              href={shopUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="border border-black/20 px-3 py-1 text-xs tracking-wide text-black transition-colors hover:border-black hover:bg-black hover:text-white"

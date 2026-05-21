@@ -1,7 +1,9 @@
 import { haversineMiles } from "@/lib/location/haversine";
 import { NYC_CENTER } from "@/lib/location/constants";
 import { getStoredLocation } from "@/lib/location/storage";
+import { getGoogleShoppingUrl } from "@/lib/search/google-shopping";
 import { NYC_STORES } from "@/lib/nearby/stores";
+import { PIECE_CATALOG } from "@/lib/swipe/catalog";
 import type { SearchResult } from "./types";
 
 const CARD_COLORS = [
@@ -23,10 +25,10 @@ export type EnrichedSearchResult = SearchResult & {
   isOpen?: boolean;
 };
 
-function hashColor(name: string): string {
+function hashColor(seed: string): string {
   let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  for (let i = 0; i < seed.length; i++) {
+    hash = seed.charCodeAt(i) + ((hash << 5) - hash);
   }
   return CARD_COLORS[Math.abs(hash) % CARD_COLORS.length];
 }
@@ -52,6 +54,18 @@ function findStoreByName(name: string) {
   );
 }
 
+function findCatalogPiece(brand: string, name: string) {
+  const b = brand.toLowerCase().trim();
+  const n = name.toLowerCase().trim();
+  return PIECE_CATALOG.find(
+    (piece) =>
+      piece.brand.toLowerCase() === b &&
+      (piece.name.toLowerCase() === n ||
+        n.includes(piece.name.toLowerCase()) ||
+        piece.name.toLowerCase().includes(n)),
+  );
+}
+
 export function enrichSearchResult(result: SearchResult): EnrichedSearchResult {
   if (result.type === "store") {
     const store = findStoreByName(result.name);
@@ -66,6 +80,18 @@ export function enrichSearchResult(result: SearchResult): EnrichedSearchResult {
           })
         : undefined,
       isOpen: store?.isOpen ?? true,
+    };
+  }
+
+  if (result.type === "piece") {
+    const catalogMatch = result.brand
+      ? findCatalogPiece(result.brand, result.name)
+      : undefined;
+    const seed = `${result.brand ?? ""}-${result.name}`;
+    return {
+      ...result,
+      color: catalogMatch?.color ?? hashColor(seed),
+      url: getGoogleShoppingUrl(result.brand ?? "", result.name),
     };
   }
 

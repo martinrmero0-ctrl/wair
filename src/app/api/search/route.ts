@@ -65,63 +65,78 @@ export async function GET(request: Request) {
   const storeContext = NYC_STORES.map((store) => ({
     name: store.name,
     type: store.type,
+    neighborhood: store.neighborhood,
     tags: store.tags,
     priceRange: "$".repeat(store.priceRange),
     officialUrl:
       OFFICIAL_STORE_URLS[store.name.toLowerCase()] ?? null,
   }));
 
-  const pieceContext = PIECE_CATALOG.slice(0, 12).map((piece) => ({
-    name: piece.name,
-    brand: piece.brand,
-    category: piece.category,
-    tags: piece.aestheticTags,
-    priceRange: "$".repeat(piece.priceRange),
-  }));
+  const pieceContext = PIECE_CATALOG.map((piece) => {
+    const brandUrl = OFFICIAL_BRAND_URLS[piece.brand.toLowerCase()] ?? null;
+    return {
+      name: piece.name,
+      brand: piece.brand,
+      category: piece.category,
+      size: piece.size,
+      tags: piece.aestheticTags,
+      priceRange: "$".repeat(piece.priceRange),
+      shopUrl: brandUrl,
+    };
+  });
 
   try {
     const message = await anthropic.messages.create({
       model: SEARCH_MODEL,
-      max_tokens: 1200,
+      max_tokens: 1400,
       system: SEARCH_SYSTEM_PROMPT,
       messages: [
         {
           role: "user",
-          content: `Available brands (use these official URLs when returning a listed brand):
+          content: `Available brands (official URLs for brand and piece results):
 ${SEARCH_BRANDS.map((b) => {
   const url = OFFICIAL_BRAND_URLS[b.toLowerCase()];
   return url ? `- ${b}: ${url}` : `- ${b}`;
 }).join("\n")}
 
-Available NYC stores (use these official URLs when returning a listed store):
+Available NYC stores (official URLs for store results):
 ${storeContext
   .map((s) =>
     s.officialUrl
-      ? `- ${s.name} (${s.type}): ${s.officialUrl}`
-      : `- ${s.name} (${s.type})`,
+      ? `- ${s.name} (${s.type}, ${s.neighborhood}): ${s.officialUrl}`
+      : `- ${s.name} (${s.type}, ${s.neighborhood})`,
   )
   .join("\n")}
 
-Sample pieces in catalog:
-${pieceContext.map((p) => `- ${p.brand} — ${p.name}`).join("\n")}
+Piece catalog (use for piece-intent searches — match query to similar items/brands):
+${pieceContext
+  .map(
+    (p) =>
+      `- ${p.brand} — ${p.name} (${p.category}, size ${p.size}, ${p.priceRange})${
+        p.shopUrl ? ` → ${p.shopUrl}` : ""
+      }`,
+  )
+  .join("\n")}
 
 User search query: "${query}"
 
-Return exactly 4 results as JSON with this shape (no markdown, no extra text):
+First classify intent (piece | brand | store), then return exactly 4 results of that type only.
+
+Return JSON only (no markdown):
 {
   "results": [
     {
       "name": "string",
-      "type": "brand" | "store" | "piece",
+      "type": "piece" | "brand" | "store",
+      "brand": "string (required when type is piece)",
       "description": "string",
       "aestheticTags": ["string"],
       "priceRange": "$" | "$$" | "$$$" | "$$$$",
+      "sizeAvailability": "string (piece only)",
       "url": "https://official-site.com" | null
     }
   ]
-}
-
-Use null for url when you are not certain of the official website. Never use placeholder or guessed URLs.`,
+}`,
         },
       ],
     });
