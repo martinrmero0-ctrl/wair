@@ -1,4 +1,5 @@
 export function formatDistance(miles: number) {
+  if (!Number.isFinite(miles)) return "—";
   return `${miles.toFixed(1)} mi`;
 }
 

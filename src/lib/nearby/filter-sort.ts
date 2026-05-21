@@ -1,3 +1,4 @@
+import { resolveNeighborhoodFromQuery } from "./neighborhoods";
 import type { NearbyStore, StoreSort, StoreTagFilter } from "./types";
 
 export function filterStores(
@@ -6,6 +7,7 @@ export function filterStores(
   tag: StoreTagFilter,
 ): NearbyStore[] {
   const normalized = query.trim().toLowerCase();
+  const neighborhood = resolveNeighborhoodFromQuery(query);
 
   return stores.filter((store) => {
     const matchesTag = tag === "all" || store.tags.includes(tag);
@@ -13,7 +15,16 @@ export function filterStores(
 
     if (!normalized) return true;
 
-    const haystack = [store.name, store.type, ...store.tags]
+    if (neighborhood) {
+      return store.neighborhood === neighborhood;
+    }
+
+    const haystack = [
+      store.name,
+      store.type,
+      store.neighborhood,
+      ...store.tags,
+    ]
       .join(" ")
       .toLowerCase();
 

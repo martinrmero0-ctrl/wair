@@ -1,3 +1,5 @@
+import type { NYCNeighborhood } from "./neighborhoods";
+
 export type StoreTag =
   | "vintage"
   | "denim"
@@ -11,8 +13,11 @@ export type NearbyStore = {
   name: string;
   type: string;
   address: string;
+  neighborhood: NYCNeighborhood;
   latitude: number;
   longitude: number;
+  /** True when friends have rated this store (social proof). */
+  friendRated?: boolean;
   /** Distance from user (or NYC fallback); computed at runtime */
   distanceMiles: number;
   rating: number;

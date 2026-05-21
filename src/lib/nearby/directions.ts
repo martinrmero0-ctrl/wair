@@ -9,6 +9,13 @@ export function isIOSDevice(): boolean {
   return isAppleMobile || isIpadOs;
 }
 
+/** Stable Google Maps URL — safe for SSR and initial client render. */
+export function getGoogleMapsDirectionsUrl(address: string): string {
+  const destination = encodeURIComponent(address);
+  return `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=walking`;
+}
+
+/** Prefer Apple Maps on iOS after hydration; Google Maps elsewhere. */
 export function getDirectionsUrl(address: string): string {
   const destination = encodeURIComponent(address);
 
@@ -16,5 +23,5 @@ export function getDirectionsUrl(address: string): string {
     return `maps://maps.apple.com/?daddr=${destination}&dirflg=w`;
   }
 
-  return `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=walking`;
+  return getGoogleMapsDirectionsUrl(address);
 }

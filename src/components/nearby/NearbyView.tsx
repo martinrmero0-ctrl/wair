@@ -86,7 +86,7 @@ export function NearbyView() {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search stores, styles, neighborhoods…"
+          placeholder="Search stores and neighborhoods"
           className="w-full border border-black/15 bg-white px-5 py-3.5 text-base text-black placeholder:text-black/35 outline-none focus:border-black/40"
         />
 

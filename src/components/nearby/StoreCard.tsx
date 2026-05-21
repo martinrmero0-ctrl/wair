@@ -5,7 +5,7 @@ import {
   formatPriceRange,
   formatReviewCount,
 } from "@/lib/nearby/format";
-import { getDirectionsUrl } from "@/lib/nearby/directions";
+import { useDirectionsUrl } from "@/hooks/useDirectionsUrl";
 import type { NearbyStore } from "@/lib/nearby/types";
 
 type StoreCardProps = {
@@ -13,6 +13,38 @@ type StoreCardProps = {
   bookmarked: boolean;
   onToggleBookmark: (id: string) => void;
 };
+
+function FriendRatedBadge() {
+  return (
+    <span
+      className="group relative inline-flex items-center gap-0.5 text-black/50"
+      aria-label="Rated by friends"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        className="h-3.5 w-3.5"
+        aria-hidden
+      >
+        <circle cx="10" cy="8.5" r="2.75" />
+        <path d="M4.5 19c1-2.6 2.9-4 5.5-4s4.5 1.4 5.5 4" />
+      </svg>
+      <svg
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        className="h-2.5 w-2.5 text-black/45"
+        aria-hidden
+      >
+        <path d="M12 3.5l1.2 2.9 3.1.2-2.4 1.8.9 3-2.8-1.7-2.8 1.7.9-3-2.4-1.8 3.1-.2L12 3.5z" />
+      </svg>
+      <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1.5 -translate-x-1/2 whitespace-nowrap border border-black/10 bg-white px-2 py-1 text-xs tracking-wide text-black opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
+        rated by friends
+      </span>
+    </span>
+  );
+}
 
 function BookmarkIcon({ filled }: { filled: boolean }) {
   return (
@@ -34,7 +66,7 @@ export function StoreCard({
   bookmarked,
   onToggleBookmark,
 }: StoreCardProps) {
-  const directionsUrl = getDirectionsUrl(store.address);
+  const directionsUrl = useDirectionsUrl(store.address);
 
   return (
     <article className="border border-black/10">
@@ -83,11 +115,11 @@ export function StoreCard({
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-          <span>
+          <span className="inline-flex items-center gap-1.5">
             <span className="text-black">{store.rating.toFixed(1)}</span>
-            <span className="text-black/40"> ★</span>
+            <span className="text-black/40">★</span>
+            {store.friendRated ? <FriendRatedBadge /> : null}
             <span className="text-black/45">
-              {" "}
               ({formatReviewCount(store.reviewCount)})
             </span>
           </span>
