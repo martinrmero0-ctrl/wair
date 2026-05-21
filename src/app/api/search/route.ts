@@ -11,13 +11,15 @@ import { PIECE_CATALOG } from "@/lib/swipe/catalog";
 import { NYC_STORES } from "@/lib/nearby/stores";
 
 function getAnthropicClient() {
-  const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
-  if (!apiKey) return null;
-  return new Anthropic({ apiKey });
+  const cleanKey = process.env.ANTHROPIC_API_KEY?.replace(/\s/g, "").trim();
+  if (!cleanKey) return null;
+  return new Anthropic({ apiKey: cleanKey });
 }
 
 function logSearchError(error: unknown, context: { query: string }) {
-  const hasKey = Boolean(process.env.ANTHROPIC_API_KEY?.trim());
+  const hasKey = Boolean(
+    process.env.ANTHROPIC_API_KEY?.replace(/\s/g, "").trim(),
+  );
 
   if (error instanceof Anthropic.APIError) {
     console.error("Search API error (Anthropic):", {
