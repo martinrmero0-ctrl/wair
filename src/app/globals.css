@@ -24,3 +24,58 @@ body {
   padding-top: var(--nav-height);
   min-height: 100dvh;
 }
+
+/* Explore map pins */
+.explore-map-pin {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -100%);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.explore-map-pin__dot {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 25%);
+  transition: transform 0.15s ease;
+}
+
+.explore-map-pin:hover .explore-map-pin__dot,
+.explore-map-pin--selected .explore-map-pin__dot {
+  transform: scale(1.2);
+}
+
+.explore-map-pin__badges {
+  display: flex;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.explore-map-pin__star {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgb(0 0 0 / 12%);
+  background: #fff;
+  font-size: 9px;
+  line-height: 1;
+  color: #000;
+}
+
+.explore-map-pin__bookmark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgb(0 0 0 / 12%);
+  background: #000;
+  color: #fff;
+}

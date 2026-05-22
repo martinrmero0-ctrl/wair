@@ -17,6 +17,8 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+Add `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` to `.env.local` for the Explore map view (Maps JavaScript API enabled in Google Cloud Console).
+
 ## Routes
 
 | Path        | Screen              |
