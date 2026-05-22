@@ -1,0 +1,113 @@
+import type { SocialPost } from "./types";
+
+export const SOCIAL_POSTS: SocialPost[] = [
+  {
+    id: "1",
+    username: "alexromero",
+    type: "bought",
+    subject: "Kapital Boro Jacket",
+    caption: "finally found one in my size",
+    timestamp: "2h ago",
+    likes: 24,
+    comments: [
+      {
+        id: "1-1",
+        username: "styleuser",
+        text: "grail piece — congrats",
+        timestamp: "1h ago",
+      },
+      {
+        id: "1-2",
+        username: "usernyc",
+        text: "which store did you find it at?",
+        timestamp: "45m ago",
+      },
+    ],
+  },
+  {
+    id: "2",
+    username: "styleuser",
+    type: "rated",
+    subject: "Blue in Green ★★★★★",
+    caption: "best denim selection in the city",
+    timestamp: "5h ago",
+    likes: 41,
+    comments: [
+      {
+        id: "2-1",
+        username: "alexromero",
+        text: "agreed, their Oni selection is insane",
+        timestamp: "3h ago",
+      },
+    ],
+  },
+  {
+    id: "3",
+    username: "alexromero",
+    type: "selling",
+    subject: "NEEDLES Track Pant size 32",
+    caption: "worn twice",
+    price: "$280",
+    timestamp: "1d ago",
+    likes: 12,
+    comments: [],
+  },
+  {
+    id: "4",
+    username: "usernyc",
+    type: "bought",
+    subject: "Engineered Garments Fatigue Pant",
+    caption: "perfect weight for summer",
+    timestamp: "1d ago",
+    likes: 18,
+    comments: [
+      {
+        id: "4-1",
+        username: "styleuser",
+        text: "the olive ones?",
+        timestamp: "20h ago",
+      },
+    ],
+  },
+  {
+    id: "5",
+    username: "styleuser",
+    type: "rated",
+    subject: "Tokio 7 ★★★★",
+    caption: "great finds if you dig through everything",
+    timestamp: "2d ago",
+    likes: 33,
+    comments: [
+      {
+        id: "5-1",
+        username: "usernyc",
+        text: "went last weekend, totally worth it",
+        timestamp: "1d ago",
+      },
+      {
+        id: "5-2",
+        username: "alexromero",
+        text: "pro tip: go early on saturday",
+        timestamp: "1d ago",
+      },
+    ],
+  },
+  {
+    id: "6",
+    username: "alexromero",
+    type: "selling",
+    subject: "Visvim FBT size 10.5",
+    caption: "too small for me",
+    price: "$650",
+    timestamp: "3d ago",
+    likes: 9,
+    comments: [
+      {
+        id: "6-1",
+        username: "styleuser",
+        text: "still available?",
+        timestamp: "2d ago",
+      },
+    ],
+  },
+];
