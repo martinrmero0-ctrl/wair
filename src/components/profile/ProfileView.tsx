@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { FollowListModal } from "@/components/social/FollowListModal";
 import {
   BUDGET_MAX,
   BUDGET_MIN,
@@ -9,10 +11,20 @@ import {
   TOP_SIZES,
   WAIST_SIZES,
 } from "@/lib/profile/options";
+import { getBookmarkedStoreIds } from "@/lib/nearby/bookmarks";
+import { NYC_STORES } from "@/lib/nearby/stores";
 import { DEFAULT_PROFILE, getProfile, saveProfile } from "@/lib/profile/storage";
 import type { UserProfile } from "@/lib/profile/types";
+import {
+  CURRENT_USER_USERNAME,
+  getFollowerCount,
+  getFollowingCountForCurrentUser,
+} from "@/lib/social/follows";
+import { getRecentPostsByUsername } from "@/lib/social/recent-posts";
+import { FavoriteSpotCard } from "./FavoriteSpotCard";
 import { ProfileSection } from "./ProfileSection";
 import { ProfileToggle } from "./ProfileToggle";
+import { RecentActivityItem } from "./RecentActivityItem";
 
 function UserIcon() {
   return (
@@ -40,11 +52,42 @@ export function ProfileView() {
   const [customInput, setCustomInput] = useState("");
   const [hydrated, setHydrated] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [followModal, setFollowModal] = useState<"followers" | "following" | null>(
+    null,
+  );
+
+  const refreshSocialCounts = useCallback(() => {
+    setFollowerCount(getFollowerCount(CURRENT_USER_USERNAME));
+    setFollowingCount(getFollowingCountForCurrentUser());
+  }, []);
 
   useEffect(() => {
     setProfile(getProfile());
     setHydrated(true);
-  }, []);
+    refreshSocialCounts();
+  }, [refreshSocialCounts]);
+
+  const [bookmarkIds, setBookmarkIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const refreshBookmarks = () => setBookmarkIds(getBookmarkedStoreIds());
+    refreshBookmarks();
+    window.addEventListener("focus", refreshBookmarks);
+    return () => window.removeEventListener("focus", refreshBookmarks);
+  }, [hydrated]);
+
+  const favoriteStores = useMemo(
+    () => NYC_STORES.filter((store) => bookmarkIds.includes(store.id)),
+    [bookmarkIds],
+  );
+
+  const recentPosts = useMemo(
+    () => getRecentPostsByUsername(CURRENT_USER_USERNAME, 3),
+    [],
+  );
 
   const updateProfile = useCallback((next: UserProfile) => {
     setProfile(next);
@@ -104,13 +147,71 @@ export function ProfileView() {
           Profile
         </h1>
 
-        <div className="flex flex-col items-center pb-6 text-center">
+        <div className="flex flex-col items-center pb-2 text-center">
           <div className="flex h-24 w-24 items-center justify-center rounded-full border border-black/15 bg-white">
             <UserIcon />
           </div>
-          <p className="mt-4 text-xl font-medium text-black">yevo user</p>
+          <Link
+            href={`/profile/${CURRENT_USER_USERNAME}`}
+            className="mt-4 text-xl font-medium text-black transition-opacity hover:opacity-70"
+          >
+            @yevouser
+          </Link>
           <p className="mt-1 text-sm text-black/50">New York City</p>
+
+          <div className="mt-5 flex gap-8">
+            <button
+              type="button"
+              onClick={() => setFollowModal("followers")}
+              className="text-center transition-opacity hover:opacity-70"
+            >
+              <p className="text-lg font-medium text-black">{followerCount}</p>
+              <p className="text-xs tracking-wide text-black/45 uppercase">
+                Followers
+              </p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setFollowModal("following")}
+              className="text-center transition-opacity hover:opacity-70"
+            >
+              <p className="text-lg font-medium text-black">{followingCount}</p>
+              <p className="text-xs tracking-wide text-black/45 uppercase">
+                Following
+              </p>
+            </button>
+          </div>
         </div>
+
+        <ProfileSection title="Favorite spots">
+          {favoriteStores.length === 0 ? (
+            <p className="text-sm text-black/45">
+              Bookmark stores on{" "}
+              <Link href="/nearby" className="text-black underline">
+                Explore
+              </Link>{" "}
+              to see them here.
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              {favoriteStores.map((store) => (
+                <FavoriteSpotCard key={store.id} store={store} />
+              ))}
+            </div>
+          )}
+        </ProfileSection>
+
+        <ProfileSection title="Recent activity">
+          {recentPosts.length === 0 ? (
+            <p className="text-sm text-black/45">No posts yet.</p>
+          ) : (
+            <div>
+              {recentPosts.map((post) => (
+                <RecentActivityItem key={post.id} post={post} />
+              ))}
+            </div>
+          )}
+        </ProfileSection>
 
         <ProfileSection title="My sizes">
           <div className="grid grid-cols-3 gap-3">
@@ -332,6 +433,14 @@ export function ProfileView() {
           </div>
         </ProfileSection>
       </div>
+
+      <FollowListModal
+        open={followModal !== null}
+        mode={followModal ?? "followers"}
+        profileUsername={CURRENT_USER_USERNAME}
+        onClose={() => setFollowModal(null)}
+        onFollowChange={refreshSocialCounts}
+      />
 
       <div className="fixed inset-x-0 bottom-0 border-t border-black/10 bg-white px-6 py-4">
         <div className="mx-auto w-full max-w-lg">

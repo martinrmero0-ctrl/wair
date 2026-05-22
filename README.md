@@ -27,7 +27,8 @@ Add `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` to `.env.local` for the Explore map view (
 | `/swipe`    | Daily swipe deck    |
 | `/wishlist` | Wishlist            |
 | `/nearby`   | Explore — stores (NYC) |
-| `/social`   | Social feed (coming soon) |
+| `/social`   | Social feed + map overlay |
+| `/profile/[username]` | Public user profile |
 | `/profile`  | Profile & settings  |
 
 ## Project structure

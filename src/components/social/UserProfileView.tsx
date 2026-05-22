@@ -1,10 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getProfile } from "@/lib/profile/storage";
+import {
+  CURRENT_USER_USERNAME,
+  getFollowerCount,
+  isFollowing,
+  toggleFollow,
+} from "@/lib/social/follows";
+import { computeTasteMatch } from "@/lib/social/taste-match";
 import { getPostsByUsername } from "@/lib/social/users";
 import type { SocialUserProfile } from "@/lib/social/users";
 import { initialsFromUsername } from "@/lib/social/utils";
+import { TasteMatchBadge } from "./TasteMatchBadge";
 import { UserProfilePostTile } from "./UserProfilePostTile";
 
 type UserProfileViewProps = {
@@ -14,7 +23,29 @@ type UserProfileViewProps = {
 
 export function UserProfileView({ profile, postCount }: UserProfileViewProps) {
   const [following, setFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(profile.followers);
   const posts = getPostsByUsername(profile.username);
+  const isSelf = profile.username === CURRENT_USER_USERNAME;
+
+  const refreshFollowState = useCallback(() => {
+    setFollowing(isFollowing(profile.username));
+    setFollowerCount(getFollowerCount(profile.username));
+  }, [profile.username]);
+
+  useEffect(() => {
+    refreshFollowState();
+  }, [refreshFollowState]);
+
+  const tasteMatch = useMemo(() => {
+    if (isSelf) return 0;
+    const viewerAesthetics = getProfile().aesthetics;
+    return computeTasteMatch(viewerAesthetics, profile.aesthetics);
+  }, [isSelf, profile.aesthetics]);
+
+  const handleFollow = () => {
+    toggleFollow(profile.username);
+    refreshFollowState();
+  };
 
   return (
     <main className="flex min-h-[calc(100dvh-var(--nav-height))] flex-col bg-white">
@@ -38,18 +69,31 @@ export function UserProfileView({ profile, postCount }: UserProfileViewProps) {
           </h1>
           <p className="mt-1 text-sm text-black/50">{profile.location}</p>
 
-          <button
-            type="button"
-            onClick={() => setFollowing((v) => !v)}
-            className={[
-              "mt-5 min-w-[8rem] border px-6 py-2 text-sm tracking-wide uppercase transition-colors",
-              following
-                ? "border-black bg-white text-black"
-                : "border-black bg-black text-white hover:opacity-85",
-            ].join(" ")}
-          >
-            {following ? "Following" : "Follow"}
-          </button>
+          {!isSelf && tasteMatch > 0 ? (
+            <TasteMatchBadge percent={tasteMatch} />
+          ) : null}
+
+          {!isSelf ? (
+            <button
+              type="button"
+              onClick={handleFollow}
+              className={[
+                "mt-5 min-w-[8rem] border px-6 py-2 text-sm tracking-wide uppercase transition-colors",
+                following
+                  ? "border-black bg-white text-black"
+                  : "border-black bg-black text-white hover:opacity-85",
+              ].join(" ")}
+            >
+              {following ? "Following" : "Follow"}
+            </button>
+          ) : (
+            <Link
+              href="/profile"
+              className="mt-5 border border-black/20 px-6 py-2 text-sm tracking-wide text-black transition-colors hover:border-black hover:bg-black hover:text-white"
+            >
+              Edit profile
+            </Link>
+          )}
         </div>
 
         <div className="mt-8 flex justify-center gap-10 border-y border-black/10 py-5">
@@ -66,7 +110,7 @@ export function UserProfileView({ profile, postCount }: UserProfileViewProps) {
             </p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-medium text-black">{profile.followers}</p>
+            <p className="text-lg font-medium text-black">{followerCount}</p>
             <p className="text-xs tracking-wide text-black/45 uppercase">
               Followers
             </p>
