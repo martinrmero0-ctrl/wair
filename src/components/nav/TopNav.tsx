@@ -30,7 +30,7 @@ export function TopNav() {
         href="/"
         className="text-xl font-medium italic tracking-tight text-black"
       >
-        Wair
+        Yevo
       </Link>
 
       <nav

@@ -144,7 +144,7 @@ export function LandingHero() {
                 : "mb-12 text-[4.5rem] leading-none sm:text-[5.5rem]",
             ].join(" ")}
           >
-            Wair
+            Yevo
           </h1>
         </header>
 

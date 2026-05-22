@@ -28,7 +28,7 @@ export function LocationPermissionPrompt({
           See what&apos;s near you
         </p>
         <p className="mt-3 text-sm leading-relaxed text-black/55">
-          Wair uses your location to show accurate distances to vintage and
+          Yevo uses your location to show accurate distances to vintage and
           streetwear stores in the city.
         </p>
 

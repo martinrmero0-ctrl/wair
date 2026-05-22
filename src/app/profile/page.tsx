@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ProfileView } from "@/components/profile/ProfileView";
 
 export const metadata: Metadata = {
-  title: "Profile — Wair",
+  title: "Profile — Yevo",
 };
 
 export default function ProfilePage() {

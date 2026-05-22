@@ -13,7 +13,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Wair — For you, by you.",
+  title: "Yevo — For you, by you.",
   description:
     "Fashion discovery curated for you. Swipe daily picks, build your wishlist, and find vintage and streetwear nearby.",
 };

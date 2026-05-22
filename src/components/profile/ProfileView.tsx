@@ -108,7 +108,7 @@ export function ProfileView() {
           <div className="flex h-24 w-24 items-center justify-center rounded-full border border-black/15 bg-white">
             <UserIcon />
           </div>
-          <p className="mt-4 text-xl font-medium text-black">wair user</p>
+          <p className="mt-4 text-xl font-medium text-black">yevo user</p>
           <p className="mt-1 text-sm text-black/50">New York City</p>
         </div>
 

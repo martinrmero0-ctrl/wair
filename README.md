@@ -1,4 +1,4 @@
-# Wair
+# Yevo
 
 **For you, by you.** — A minimal fashion discovery app.
 

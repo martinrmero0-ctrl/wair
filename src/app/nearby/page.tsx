@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { NearbyView } from "@/components/nearby/NearbyView";
 
 export const metadata: Metadata = {
-  title: "Explore — Wair",
+  title: "Explore — Yevo",
 };
 
 export default function NearbyPage() {

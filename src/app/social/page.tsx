@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Social — Wair",
+  title: "Social — Yevo",
 };
 
 export default function SocialPage() {
