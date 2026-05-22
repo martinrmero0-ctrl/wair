@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { initialsFromUsername } from "@/lib/social/utils";
 import type { SocialComment, SocialPost } from "@/lib/social/types";
+import { UserAvatarLink, UsernameLink } from "./UserProfileLink";
 
 function typeLabel(type: SocialPost["type"]) {
   if (type === "bought") return "BOUGHT";
@@ -19,17 +19,13 @@ function actionVerb(type: SocialPost["type"]) {
 function CommentRow({ comment }: { comment: SocialComment }) {
   return (
     <div className="flex gap-2.5 py-2">
-      <div
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-black/12 bg-white text-[10px] font-medium text-black"
-        aria-hidden
-      >
-        {initialsFromUsername(comment.username)}
-      </div>
+      <UserAvatarLink username={comment.username} size="sm" />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-          <span className="text-xs font-medium text-black">
-            @{comment.username}
-          </span>
+          <UsernameLink
+            username={comment.username}
+            className="text-xs"
+          />
           <span className="text-[10px] text-black/35">{comment.timestamp}</span>
         </div>
         <p className="mt-0.5 text-sm leading-snug text-black/75">
@@ -74,18 +70,11 @@ export function SocialPostCard({ post }: SocialPostCardProps) {
   return (
     <article className="border-b border-black/10 px-6 py-5">
       <div className="flex gap-3">
-        <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/15 bg-white text-xs font-medium tracking-wide text-black"
-          aria-hidden
-        >
-          {initialsFromUsername(post.username)}
-        </div>
+        <UserAvatarLink username={post.username} />
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-medium text-black">
-              @{post.username}
-            </span>
+            <UsernameLink username={post.username} className="text-sm" />
             <span className="border border-black/15 px-2 py-0.5 text-[10px] tracking-[0.15em] text-black/55 uppercase">
               {typeLabel(post.type)}
             </span>

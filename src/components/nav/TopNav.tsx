@@ -41,7 +41,11 @@ export function TopNav() {
           <Link
             key={href}
             href={href}
-            className={navLinkClass(pathname === href)}
+            className={navLinkClass(
+              href === "/profile"
+                ? pathname === href || pathname.startsWith("/profile/")
+                : pathname === href,
+            )}
           >
             {label}
           </Link>
