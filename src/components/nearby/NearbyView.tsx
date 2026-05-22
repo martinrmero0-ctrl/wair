@@ -12,12 +12,8 @@ import {
 import { filterStores, sortStores } from "@/lib/nearby/filter-sort";
 import { NYC_STORES } from "@/lib/nearby/stores";
 import type { StoreSort, StoreTagFilter } from "@/lib/nearby/types";
-import { ExploreMap } from "./ExploreMap";
+import { NearbySort } from "./NearbySort";
 import { NearbyTagFilters } from "./NearbyTagFilters";
-import {
-  NearbyViewToolbar,
-  type ExploreViewMode,
-} from "./NearbyViewToolbar";
 import { StoreCard } from "./StoreCard";
 
 export function NearbyView() {
@@ -39,7 +35,6 @@ export function NearbyView() {
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState<StoreTagFilter>("all");
   const [sort, setSort] = useState<StoreSort>("nearest");
-  const [view, setView] = useState<ExploreViewMode>("list");
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
@@ -99,53 +94,32 @@ export function NearbyView() {
           <NearbyTagFilters value={tag} onChange={setTag} />
         </div>
 
-        <div className="mt-4">
-          <NearbyViewToolbar
-            sort={sort}
-            onSortChange={setSort}
-            view={view}
-            onViewChange={setView}
-          />
+        <div className="mt-4 border-b border-black/10">
+          <NearbySort value={sort} onChange={setSort} />
         </div>
       </header>
 
-      {view === "map" ? (
-        <div className="flex min-h-0 flex-1 flex-col">
-          {!hydrated || !geoHydrated ? (
-            <p className="flex flex-1 items-center justify-center text-black/40">
-              Loading…
-            </p>
-          ) : stores.length === 0 ? (
-            <p className="flex flex-1 items-center justify-center px-6 text-lg text-black/45">
-              No stores match your search.
-            </p>
-          ) : (
-            <ExploreMap stores={stores} bookmarkedIds={bookmarks} />
-          )}
-        </div>
-      ) : (
-        <div className="flex-1 px-6 py-6">
-          {!hydrated || !geoHydrated ? (
-            <p className="text-center text-black/40">Loading…</p>
-          ) : stores.length === 0 ? (
-            <p className="text-center text-lg text-black/45">
-              No stores match your search.
-            </p>
-          ) : (
-            <ul className="flex flex-col gap-5">
-              {stores.map((store) => (
-                <li key={store.id}>
-                  <StoreCard
-                    store={store}
-                    bookmarked={bookmarks.includes(store.id)}
-                    onToggleBookmark={handleToggleBookmark}
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+      <div className="flex-1 px-6 py-6">
+        {!hydrated || !geoHydrated ? (
+          <p className="text-center text-black/40">Loading…</p>
+        ) : stores.length === 0 ? (
+          <p className="text-center text-lg text-black/45">
+            No stores match your search.
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-5">
+            {stores.map((store) => (
+              <li key={store.id}>
+                <StoreCard
+                  store={store}
+                  bookmarked={bookmarks.includes(store.id)}
+                  onToggleBookmark={handleToggleBookmark}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </main>
   );
 }

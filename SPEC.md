@@ -49,7 +49,7 @@
 - Neighborhood search (Soho, Williamsburg, etc.)
 - Friend-rating badge on store cards (Blue in Green, Tokio 7)
 - Bookmark + Directions (Apple Maps on iOS, Google Maps elsewhere)
-- Beli-style **list / map toggle**; map pins colored by rating, friend ★ and bookmark badges
+- Store list with rating, friend ★ badge, bookmark + Directions (map lives on Social)
 
 ### Profile (settings)
 
