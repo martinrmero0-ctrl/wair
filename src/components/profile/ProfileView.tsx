@@ -1,8 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FollowListModal } from "@/components/social/FollowListModal";
+import { createClient } from "@/lib/supabase/client";
+import {
+  ensureUserRow,
+  fetchUserRow,
+  updateUserProfile,
+} from "@/lib/supabase/users";
 import {
   BUDGET_MAX,
   BUDGET_MIN,
@@ -48,6 +55,7 @@ function formatBudgetLabel(value: number) {
 }
 
 export function ProfileView() {
+  const router = useRouter();
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
   const [customInput, setCustomInput] = useState("");
   const [hydrated, setHydrated] = useState(false);
@@ -57,6 +65,10 @@ export function ProfileView() {
   const [followModal, setFollowModal] = useState<"followers" | "following" | null>(
     null,
   );
+  const [userId, setUserId] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [location, setLocation] = useState("New York City");
 
   const refreshSocialCounts = useCallback(() => {
     setFollowerCount(getFollowerCount(CURRENT_USER_USERNAME));
@@ -64,10 +76,44 @@ export function ProfileView() {
   }, []);
 
   useEffect(() => {
-    setProfile(getProfile());
-    setHydrated(true);
-    refreshSocialCounts();
-  }, [refreshSocialCounts]);
+    const load = async () => {
+      const local = getProfile();
+      setProfile(local);
+
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.user) {
+        router.replace("/auth");
+        return;
+      }
+
+      setUserId(session.user.id);
+      setEmail(session.user.email ?? "");
+
+      await ensureUserRow(supabase, session.user.id, session.user.email ?? "");
+      const row = await fetchUserRow(supabase, session.user.id);
+
+      if (row) {
+        setDisplayName(row.display_name ?? "");
+        setLocation(row.location ?? "New York City");
+        if (row.sizes) {
+          setProfile((prev) => ({
+            ...prev,
+            sizes: { ...prev.sizes, ...row.sizes },
+            aesthetics: row.aesthetic_tags ?? prev.aesthetics,
+          }));
+        }
+      }
+
+      setHydrated(true);
+      refreshSocialCounts();
+    };
+
+    load();
+  }, [router, refreshSocialCounts]);
 
   const [bookmarkIds, setBookmarkIds] = useState<string[]>([]);
 
@@ -126,10 +172,31 @@ export function ProfileView() {
     setCustomInput("");
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     saveProfile(profile);
     setSavedFlash(true);
     window.setTimeout(() => setSavedFlash(false), 2000);
+
+    if (!userId) return;
+
+    try {
+      const supabase = createClient();
+      await updateUserProfile(supabase, userId, {
+        display_name: displayName.trim() || null,
+        location: location.trim() || "New York City",
+        sizes: profile.sizes,
+        aesthetic_tags: profile.aesthetics,
+      });
+    } catch {
+      /* local save still applied */
+    }
+  };
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/auth");
+    router.refresh();
   };
 
   if (!hydrated) {
@@ -143,21 +210,43 @@ export function ProfileView() {
   return (
     <main className="flex min-h-[calc(100dvh-var(--nav-height))] flex-col bg-white">
       <div className="mx-auto w-full max-w-lg flex-1 px-6 pt-6 pb-28">
-        <h1 className="mb-8 text-center text-3xl font-medium italic text-black">
-          Profile
-        </h1>
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <h1 className="text-3xl font-medium italic text-black">Profile</h1>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="border border-black/20 px-3 py-1.5 text-xs tracking-wide text-black transition-colors hover:border-black hover:bg-black hover:text-white"
+          >
+            Sign out
+          </button>
+        </div>
 
         <div className="flex flex-col items-center pb-2 text-center">
           <div className="flex h-24 w-24 items-center justify-center rounded-full border border-black/15 bg-white">
             <UserIcon />
           </div>
-          <Link
-            href={`/profile/${CURRENT_USER_USERNAME}`}
-            className="mt-4 text-xl font-medium text-black transition-opacity hover:opacity-70"
-          >
-            @yevouser
-          </Link>
-          <p className="mt-1 text-sm text-black/50">New York City</p>
+          <p className="mt-4 text-sm text-black/50">{email}</p>
+          <label className="mt-3 w-full max-w-xs text-left">
+            <span className="text-xs tracking-wide text-black/45 uppercase">
+              Display name
+            </span>
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="Your name"
+              className="mt-1 w-full border border-black/15 bg-white px-3 py-2.5 text-base text-black placeholder:text-black/35 outline-none focus:border-black/40"
+            />
+          </label>
+          {displayName.trim() ? (
+            <Link
+              href={`/profile/${CURRENT_USER_USERNAME}`}
+              className="mt-2 text-sm text-black/45 transition-opacity hover:text-black"
+            >
+              View public profile
+            </Link>
+          ) : null}
+          <p className="mt-2 text-sm text-black/50">{location}</p>
 
           <div className="mt-5 flex gap-8">
             <button

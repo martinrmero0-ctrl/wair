@@ -19,6 +19,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Add `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` to `.env.local` for the Social map overlay (Maps JavaScript API enabled in Google Cloud Console).
 
+Add Supabase credentials and run `supabase/schema.sql` in the Supabase SQL editor:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
 ## Routes
 
 | Path        | Screen              |
